@@ -14,17 +14,7 @@
 #include <stdlib.h>
 void search(int);
 void reserve_book(int);
-struct user{
-    /*A user has an id, username, passowrd, cart of 5 books maximum
-    , notifcations of 5 notifs max*/
-    int id;
-    char username[25];
-    char password[25];
-    int cartsize;
-    int notifsize;
-    char notifs[10][100];
-    char cart[5][100];
-};
+
 struct book{
     /*A book has an uniqueid, book_name, author, issue_no, id of the person holding it,
      id of the person who has requested it and its due date to be returned back*/
@@ -36,10 +26,24 @@ struct book{
     int requestedby;
     int duedate;
 };
+struct user{
+    /*A user has an id,username,passowrd, cart of 5 books maximum
+    , notifcations of 5 notifs max*/
+    int id;
+    char username[25];
+    char password[25];
+    int cartsize;
+    int notifsize;
+    char notifs[10][100];
+    struct book user_books[5];
+    
+};
 struct book library[1000];
 struct user members[1000];
 int librarysize=0;
+int removesizel=0;//no. of empty spaces in library[]
 int membersize=0;
+int removesize=0;//no. of empty spaces in members[]
 int b_id=1;
 void search(int id){
     /*Search for a particular title*/
@@ -48,13 +52,13 @@ void search(int id){
     int flag=0;
     printf("Enter the book title to be searched : \n");
     scanf("%[^\n]%*c", title);
-    for(int i=0;i<librarysize;i++){
-        if(strcmp(title,library[i].bookname) == 0){
+    for(int i=0;i<(librarysize+removesize);i++){
+        if(strcmpi(title,library[i].bookname) == 0){
             flag++;
             printf("Book ID : &d \n",library[i].bookid);
             printf("Title : &s \n",library[i].bookname);
             printf("Author : &s \n",library[i].bookauthor);
-            printf("issue number : &d \n",library[i].issue);
+            printf("Issue number : &d \n",library[i].issue);
         }
     }
     int ch;
@@ -92,31 +96,127 @@ void add_book(){
     /*A librarian only function to add books to the library at librarysize abd librarysize ++*/
 }
 void delete_user(){
-    /*a librian only function to remove an user and shift all other users up and usersize--*/
+    /*a librarian only function to remove an user by making all the fields of the specific id blank */
+    int userid;
+    printf("Enter Userid to delete user : ");
+    scanf("%d",userid);
+    if((userid<(membersize+removesize))&&(userid>0))
+    {
+        int l=0,h=(membersize+removesize-1),mid;  //Binary search
+        while(l<=h)
+    {
+        mid=(l+h)/2;
+        if(userid>members[mid].id)
+        {
+            l=mid+1;
+        }
+        else if(userid<members[mid].id)
+        {
+            h=mid-1;
+        }
+        else
+        {
+            printf("Found User\n");
+            printf("Are you sure you want to delete user?\n");
+            int yes;
+            printf("Enter 1 to delete or press any other key to cancel");
+            if(yes==1)
+            {
+                members[mid].id=0;
+                 // members[mid].username=NULL;
+               // members[mid].password=NULL;
+               members[mid].cartsize=0;
+               members[mid].notifsize=0;
+               //user_books[] and notifs[][] also NULL
+            }
+            else
+            {
+                printf("User not deleted");
+            }
+            
+
+        }
+        
+    }
+    
+    }
+
+    else
+    {
+         printf("Invalid Userid\n Try Again");
+    }
+    
+    
+}
+
+void delete_book(){
+    /*A librarian only function similar to delete_user() but for books*/
+
+}
+void password_change(int id){
+    /*if login is validated user can reset his/her password*/
+    int userid=id;
+    char temppass[25];
+    printf("Enter you current password : ");
+    gets(temppass);
+    if(strcmp(members[id-1].password,temppass)==0)
+    {
+        printf("Enter your new password : ");
+        gets(members[id-1].password);
+        printf("\nPassword changed successfully");
+
+    }
+    else
+    {
+        printf("\nWrong Password\nTry again");
+    }
+}
+void inventory(){
+    /*a functions that provides data such as number of books, users etc etc*/
+    //add another variable to see the no. of books in library & no. of books issued
+    int opt;
+    do{
+        printf("Enter 1 to see the number of books\n");
+        printf("Enter 2 to see the number of active users\n");
+        printf("Enter 3 to return to the previous screen\n");
+        scanf("%d",&opt);
+        if(opt==1)
+        {
+            printf("Number of BOOKS : %d",librarysize);
+        }
+        else if(opt==2)
+        {
+            printf("Number of Active Users : %d",membersize);
+        }
+        else if(opt==3)
+        {
+            break;
+        }
+    }while(opt!=3);
+}
+
+void member(){
+    /*contains the welcome page for the member login and the required functions*/
 }
 void librarian(){
     /*a function to display the choice after validating login for a librarian*/
 }
-void delete_book(){
-    /*A librarian only function similar to delete_user() but for books*/
-}
-void password_change(){
-    /*if login is validated user can reset his/her password*/
-}
-void inventory(){
-    /*a functions that provides data such as number of books, users etc etc*/
-}
-void member(){
-    /*contains the welcome page for the member login and the required functions*/
+void new_books(){
+    //shows the 10 latest books added to library
 }
 void welcome(){
     /* The function which creates a screen and provides option to log in. */
-    printf("hello!\n");
+    printf("********************************************************************************************\n");
+    printf("********************************************************************************************\n");
+    printf("                        Welcome to LIBRARY MANAGMENT SYSTEM\n");
+    printf("********************************************************************************************\n");
+    printf("********************************************************************************************\n");
+    new_books();
     int ch;
     do{
-        printf("Type 1 to login as member \n");
-        printf("Type 2 to login as librarian \n");
-        printf("Type 3 to  exit\n");
+        printf("Enter 1 to login as member \n");
+        printf("Enter 2 to login as librarian \n");
+        printf("Enter 3 to  exit\n");
         scanf("%d",&ch);
         if(ch==1)
              member();
@@ -128,7 +228,7 @@ void welcome(){
     
 }
 int main(){
-    search(2);
-     welcome();
+    
+    welcome();
     return 0;
 }
