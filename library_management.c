@@ -17,10 +17,7 @@ void search_author(int);
 void search_title(int);
 void search_id(int);
 void reserve_book(int);
-<<<<<<< HEAD
-=======
 void welcome();
->>>>>>> 2a643ed767be67bbff50a5c962f2057ed8d68533
 
 struct book{
     /*A book has an uniqueid, book_name, author, issue_no, id of the person holding it,
@@ -34,11 +31,7 @@ struct book{
     int duedate;
 };
 struct user{
-<<<<<<< HEAD
-    /*A user has an id,username,passowrd, cart of 5 books maximum
-=======
     /*A user has an id, username, passowrd, cart of 5 books maximum
->>>>>>> 2a643ed767be67bbff50a5c962f2057ed8d68533
     , notifcations of 5 notifs max*/
     int id;
     char username[25];
@@ -46,21 +39,12 @@ struct user{
     int cartsize;
     int notifsize;
     char notifs[10][100];
-<<<<<<< HEAD
-    struct book user_books[5];
-    
-=======
     struct book cart_book[5];
->>>>>>> 2a643ed767be67bbff50a5c962f2057ed8d68533
 };
 struct book library[1000];
 struct user members[1000];
 int librarysize=0;
-<<<<<<< HEAD
 int removesizel=0;//no. of empty spaces in library[]
-=======
-int removesize=0;
->>>>>>> 2a643ed767be67bbff50a5c962f2057ed8d68533
 int membersize=0;
 int removesize=0;//no. of empty spaces in members[]
 int b_id=1;
@@ -70,15 +54,9 @@ void search_title(int id){
     int flag =0;
     int r_ch;
     printf("Enter the book title to be searched : \n");
-<<<<<<< HEAD
     scanf("%[^\n]%*c", title);
     for(int i=0;i<(librarysize+removesize);i++){
         if(strcmpi(title,library[i].bookname) == 0){
-=======
-    scanf(" %[^\n]%*c", title);
-    for(int i=0;i<librarysize;i++){
-        if(strcmp(title,library[i].bookname) == 0){
->>>>>>> 2a643ed767be67bbff50a5c962f2057ed8d68533
             flag++;
             printf("Book ID : &d \n",library[i].bookid);
             printf("Title : &s \n",library[i].bookname);
@@ -381,11 +359,7 @@ void welcome(){
     
 }
 int main(){
-<<<<<<< HEAD
     
     welcome();
-=======
-    checkout(2);
->>>>>>> 2a643ed767be67bbff50a5c962f2057ed8d68533
     return 0;
 }
