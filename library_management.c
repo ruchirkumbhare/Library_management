@@ -48,20 +48,21 @@ int removesizel=0;//no. of empty spaces in library[]
 int membersize=0;
 int removesize=0;//no. of empty spaces in members[]
 int b_id=1;
+
 void search_title(int id){
     char title[50];
     int userid = id;
     int flag =0;
     int r_ch;
     printf("Enter the book title to be searched : \n");
-    scanf("%[^\n]%*c", title);
-    for(int i=0;i<(librarysize+removesize);i++){
+    scanf("%[^\n]%*c", &title);
+    for(int i=0;i<(librarysize+removesizel);i++){
         if(strcmpi(title,library[i].bookname) == 0){
             flag++;
-            printf("Book ID : &d \n",library[i].bookid);
-            printf("Title : &s \n",library[i].bookname);
-            printf("Author : &s \n",library[i].bookauthor);
-            printf("Issue number : &d \n",library[i].issue);
+            printf("Book ID : %d \n",library[i].bookid);
+            printf("Title : %s \n",library[i].bookname);
+            printf("Author : %s \n",library[i].bookauthor);
+            printf("Issue number : %d \n",library[i].issue);
         }
     }
     if(flag==0){
@@ -78,14 +79,14 @@ void search_author(int id){
     int flag=0;
     int r_ch;
     printf("Enter the author name to be view all the books written by them : \n");
-    scanf(" %[^\n]%*c", author);
-    for(int i=0;i<librarysize;i++){
-        if(strcmp(author,library[i].bookauthor) == 0){
+    scanf(" %[^\n]%*c", &author);
+    for(int i=0;i<librarysize+removesizel;i++){
+        if(strcmpi(author,library[i].bookauthor) == 0){
             flag++;
-            printf("Book ID : &d \n",library[i].bookid);
-            printf("Title : &s \n",library[i].bookname);
-            printf("Author : &s \n",library[i].bookauthor);
-            printf("issue number : &d \n",library[i].issue);
+            printf("Book ID : %d \n",library[i].bookid);
+            printf("Title : %s \n",library[i].bookname);
+            printf("Author : %s \n",library[i].bookauthor);
+            printf("issue number : %d \n",library[i].issue);
         }
     }
     if(flag==0){
@@ -106,10 +107,10 @@ void search_id(int id){
     for(int i=0;i<librarysize;i++){
         if(bkid==library[i].bookid){
             flag++;
-            printf("Book ID : &d \n",library[i].bookid);
-            printf("Title : &s \n",library[i].bookname);
-            printf("Author : &s \n",library[i].bookauthor);
-            printf("issue number : &d \n",library[i].issue);
+            printf("Book ID : %d \n",library[i].bookid);
+            printf("Title : %s \n",library[i].bookname);
+            printf("Author : %s \n",library[i].bookauthor);
+            printf("issue number : %d \n",library[i].issue);
         }
     }
     if(flag==0){
@@ -127,7 +128,7 @@ void search(int id){
     printf("Enter 1 to search for book by Title\n");
     printf("Enter 2 to search for book by Author\n");
     printf("Enter 3 to search for book by Book ID\n");
-    printf("Enter 0 to exit for book by title\n");
+    printf("Enter 0 to exit \n");
     scanf("%d",&ch);
         switch(ch){
         case 0: return;
@@ -158,7 +159,7 @@ void search(int id){
     printf("Please enter the ID of the book, you want to check out : ");
     scanf("%d",&bkid);
     int flag=0;
-    int size = librarysize+removesize;
+    int size = librarysize+removesizel;
     int loc =0;
     /*This loop serves the purpose of getting the location of the given book and to change the flag value to 1 if the book is present
     flag remains 0 if the book is not present*/
@@ -207,7 +208,7 @@ void reserve_book(int id){
     scanf(" %[^\n]%*c", a);
     printf(" Enter the issue number");
     scanf("%d", &iss);
-    int size = librarysize+removesize;
+    int size = librarysize+removesizel;
     /* Updating the Library */
     library[size].bookid = b_id;
     b_id++;
