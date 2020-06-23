@@ -18,6 +18,8 @@ void search_title(int);
 void search_id(int);
 void reserve_book(int);
 void welcome();
+void return_book(int);
+void get_book(int);
 
 struct book{
     /*A book has an uniqueid, book_name, author, issue_no, id of the person holding it,
@@ -42,7 +44,7 @@ struct user{
     struct book cart_book[5];
 };
 struct book library[1000];
-struct book new_arriv[10];
+int new_arriv[10];
 struct user members[1000];
 int librarysize=0;
 int removesizel=0;//no. of empty spaces in library[]
@@ -88,7 +90,7 @@ void search_author(int id){
             printf("Book ID : %d \n",library[i].bookid);
             printf("Title : %s \n",library[i].bookname);
             printf("Author : %s \n",library[i].bookauthor);
-            printf("issue number : %d \n",library[i].issue);
+            printf("Issue number : %d \n",library[i].issue);
         }
     }
     if(flag==0){
@@ -99,6 +101,7 @@ void search_author(int id){
             reserve_book(userid);
     }
 }
+
 void search_id(int id){
     int userid =id;
     int bkid;
@@ -186,10 +189,9 @@ void search(int id){
     else if(flag==1&&flag1==0){
         printf("Book present, you have already borrowed %d books and can hold only 5 book at any given time.\n",members[userid].cartsize);
         library[loc].heldby = userid;
-        members[userid].cart_book[members[userid].cartsize]=library[loc];
-        librarysize--;   
+        members[userid].cart_book[members[userid].cartsize]=library[loc];   
         members[userid].cartsize++;
-        printf("Book successfullt issued by you\n");
+        printf("Book successfully issued by you\n");
         issued++;  
     }
     else if(members[userid].cartsize==5){
@@ -200,10 +202,22 @@ void search(int id){
     }
 }
 
-void checkin(int id)
-{
-    /*To return a book issued by a member back to the library*/
+void return_book(int id){
+    /*if user has book in his cart only then he can return the book*/
+    int r_id;
+    printf("Enter the ID of the book to be returned");
+    scanf("%d",&r_id);
+    for(int i =0;i<members[id].cartsize;i++){
+        if (members[id].cart_book[i].bookid==r_id){
+            library[r_id].heldby=-1;
+            //members[id].cart_book[members[id].cartsize]=NULL;
+            members[id].cartsize--;
+            printf("Book successfully returned to the library\n");
+
+        }
+    }
 }
+
 void reserve_book(int id){
     /* A new field will be created in the library with 
     requested_by = user_id,bookname =title[],bookauthor=author[]
@@ -226,16 +240,95 @@ void reserve_book(int id){
     library[size].heldby = -1;
     library[size].issue = iss;
     library[size].requestedby = id;
+    printf("The reservation id is %d, it will be the book id once the book is available",library[size].bookid);
+    printf("This id will be required to cancel reservations");
 }
 void delete_reservation(int id){
     /* shift all the books after the book id position to delete the reservation if held_by =-1 */
+    int r_id;
+    printf("Enter the reservation ID of the reservation that you want to cancel");
+    scanf("%d",&r_id);
+    int size = librarysize+removesizel;
+    int flag=0;
+    for(int i =0;i<size;i++){
+        if(library[i].bookid==r_id&&library[i].requestedby==id){
+            strcpy(library[i].bookname,"");
+            strcpy(library[i].bookauthor,"");
+            library[i].heldby=-1;
+            library[i].requestedby=-1;
+            flag=1;
+            break;
+        }
+    if(flag==0){
+        printf("No such reservation placed with the library!");
+    }    
+    else{
+        printf("Reservations succesfully cancelled!");
+    }
+    }
 }
-void add_user(){
-    /* A librarian only function to add new users to the list at membersize and memebersize++ */
+
+
+void add_user()
+{   int j=0;
+        for(j=0;j<membersize+removesizem;j++)
+        {
+            if(members[j].id==0)
+                break;
+        }
+        char name[50];
+        printf("Enter the Username");
+        scanf(" %[^\n]%*c", name);
+        members[j].id= j+1;
+        strcpy(members[j].username,name);
+        strcpy(members[j].password,toupper(name));
+    /*The deafault password is username in upper case, the member is advised to change his/her password after login*/
+        members[j].cartsize=0;
+        members[j].notifsize=0;
+        for(int i =0;i<5;i++)
+        {
+        strcpy(members[j].cart_book[i].bookauthor,"");
+        strcpy(members[j].cart_book[i].bookname,"");
+        members[j].cart_book[i].bookid=0;
+        members[j].cart_book[i].issue=0;
+        members[j].cart_book[i].heldby=-1;
+        members[j].cart_book[i].requestedby=0;
+        members[j].cart_book[i].bookid=0;
+        strcpy(members[j].notifs[i],"");
+        }
+    membersize++;
+    printf("Account Created Successfully\n");
+    printf("Userid number alloted : %d",members[j].id);
+    printf("The deafault password is username in upper case, the member is advised to change his/her password after login\n");
 }
 void add_book(){
     /*A librarian only function to add books to the library at librarysize abd librarysize ++
     also adds the book in new arriv[10]*/
+    int j=0;
+        for(j=0;j<librarysize+removesizel;j++)
+        {
+            if(library[j].bookid==0)
+                break;
+        }
+        printf("Enter the Book's name : ");
+        gets(library[j].bookname);
+        printf("Enter the Autor's name : ");
+        gets(library[j].bookauthor);
+        printf("Enter the Issue number :");
+        scanf("%d",library[j].issue);
+        library[j].heldby=-1;
+        library[j].requestedby=-1;
+        librarysize++;
+        printf("Book Added to Library Successfully\n");
+        printf("Bookid number alloted : %d",library[j].bookid);
+
+    for(int i=9;i>0;i++)    
+    {
+        new_arriv[i]=new_arriv[i-1];
+    }
+    new_arriv[0]=library[j].bookid;
+
+
 }
 void delete_user(){
     /*a librarian only function to remove an user by making all the fields of the specific id blank */
@@ -244,42 +337,35 @@ void delete_user(){
     scanf("%d",&userid);
     if((userid<(membersize+removesizem))&&(userid>0))
     {
-        int l=0,h=(membersize+removesizem-1),mid;  //Binary search
-     while(l<=h)
-     {
-        mid=(l+h)/2;
-        if(userid>members[mid].id)
-        {
-            l=mid+1;
-        }
-        else if(userid<members[mid].id)
-        {
-            h=mid-1;
-        }
-        else
-        {
-            printf("Found User\n");
-            printf("Are you sure you want to delete user?\n");
-            int yes;
-            printf("Enter 1 to delete or press any other key to cancel");
-            if(yes==1)
+        for(int i=0;i<membersize+removesizem;i++)
+        { 
+            if (members[i].id==userid)
             {
-                members[mid].id=0;
-                 // members[mid].username=NULL;
-               // members[mid].password=NULL;
-               members[mid].cartsize=0;
-               members[mid].notifsize=0;
-               //user_books[] and notifs[][] also NULL
-            }
-            else
-            {
+                printf("Found User\n");
+                printf("Are you sure you want to delete user?\n");
+                int yes;
+                printf("Enter 1 to delete or press any other key to cancel");
+                if(yes==1)
+                {
+                members[i].id=0;
+                strcpy(members[i].username,"");
+                strcpy(members[i].password,"");
+                members[i].cartsize=0;
+                members[i].notifsize=0;
+                //user_books[] and notifs[][] also NULL
+               }
+               else
+               {
                 printf("User not deleted");
-            }
+               }
             
 
+            }
+            
+            
         }
         
-     }
+     
     
     }
 
@@ -298,43 +384,33 @@ void delete_book(){
     scanf("%d",&bkid);
     if((bkid<(librarysize+removesizel))&&(bkid>0))
     {
-        int l=0,h=(librarysize+removesizel-1),mid;  //Binary search
-     while(l<=h)
-     {
-        mid=(l+h)/2;
-        if(bkid>library[mid].bookid)
-        {
-            l=mid+1;
-        }
-        else if(bkid<library[mid].bookid)
-        {
-            h=mid-1;
-        }
-        else
-        {
-            printf("Found Book\n");
-            printf("Are you sure you want to delete book?\n");
-            int yes;
-            printf("Enter 1 to delete or press any other key to cancel");
-            if(yes==1)
+        for(int i=0;i<librarysize+removesizel;i++)
+        {   
+            if (library[i].bookid==bkid)
             {
-                library[mid].bookid=0;
-                //library[mid].bookname=NULL;
-                //library[mid].authorname=null;
-                library[mid].issue=0;
-                library[mid].heldby=0;
-                library[mid].requestedby=0;
-                library[mid].duedate=0;
-            }
-            else
-            {
+                printf("Found Book\n");
+                printf("Are you sure you want to delete book?\n");
+                int yes;
+                printf("Enter 1 to delete or press any other key to cancel");
+                if(yes==1)
+                {
+                library[i].bookid=0;
+                strcpy(library[i].bookname,"");
+                strcpy(library[i].bookauthor,"");
+                library[i].issue=0;
+                library[i].heldby=0;
+                library[i].requestedby=0;
+                library[i].duedate=0;
+                }
+                else
+                {
                 printf("Book not deleted");
+                }
             }
             
-
         }
         
-     }
+     
     
     }
 
@@ -360,7 +436,7 @@ void password_change(int id){
     }
     else
     {
-        printf("\nWrong Password\nTry again");
+        printf("\nWrong Password, Try again");
     }
 }
 void inventory(){
@@ -397,6 +473,12 @@ void librarian(){
 }
 void new_books(){
     //shows the 10 latest books added to library
+    printf("10 latest books added to the library\n");
+    for (int i = 0; i < 10; i++)
+    {
+        printf("%d. %s \t\t\t BY %s \n",i+1,library[new_arriv[i]].bookname,library[new_arriv[i]].bookauthor);
+    }
+    
 }
 void welcome(){
     /* The function which creates a screen and provides option to log in. */
