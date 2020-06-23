@@ -42,14 +42,12 @@ struct user{
     struct book cart_book[5];
 };
 struct book library[1000];
-struct book new_arriv[10];
 struct user members[1000];
 int librarysize=0;
 int removesizel=0;//no. of empty spaces in library[]
 int membersize=0;
-int removesizem=0;//no. of empty spaces in members[]
+int removesize=0;//no. of empty spaces in members[]
 int b_id=1;
-int issued=0;//To count the no. of books issued out
 
 void search_title(int id){
     char title[50];
@@ -106,7 +104,7 @@ void search_id(int id){
     int r_ch;
     printf("Enter the book id to be searched : \n");
     scanf("%d", &bkid);
-    for(int i=0;i<librarysize+removesizel;i++){
+    for(int i=0;i<librarysize;i++){
         if(bkid==library[i].bookid){
             flag++;
             printf("Book ID : %d \n",library[i].bookid);
@@ -189,8 +187,6 @@ void search(int id){
         members[userid].cart_book[members[userid].cartsize]=library[loc];
         librarysize--;   
         members[userid].cartsize++;
-        printf("Book successfullt issued by you\n");
-        issued++;  
     }
     else if(members[userid].cartsize==5){
         printf("You cannot borrow more than 5 books at once, please return a book to borrow this books\n");
@@ -198,11 +194,6 @@ void search(int id){
     else{
         printf("You seem to have the same book in your cart, please return the book to borrow it again\n");
     }
-}
-
-void checkin(int id)
-{
-    /*To return a book issued by a member back to the library*/
 }
 void reserve_book(int id){
     /* A new field will be created in the library with 
@@ -234,19 +225,18 @@ void add_user(){
     /* A librarian only function to add new users to the list at membersize and memebersize++ */
 }
 void add_book(){
-    /*A librarian only function to add books to the library at librarysize abd librarysize ++
-    also adds the book in new arriv[10]*/
+    /*A librarian only function to add books to the library at librarysize abd librarysize ++*/
 }
 void delete_user(){
     /*a librarian only function to remove an user by making all the fields of the specific id blank */
     int userid;
     printf("Enter Userid to delete user : ");
-    scanf("%d",&userid);
-    if((userid<(membersize+removesizem))&&(userid>0))
+    scanf("%d",userid);
+    if((userid<(membersize+removesize))&&(userid>0))
     {
-        int l=0,h=(membersize+removesizem-1),mid;  //Binary search
-     while(l<=h)
-     {
+        int l=0,h=(membersize+removesize-1),mid;  //Binary search
+        while(l<=h)
+    {
         mid=(l+h)/2;
         if(userid>members[mid].id)
         {
@@ -279,7 +269,7 @@ void delete_user(){
 
         }
         
-     }
+    }
     
     }
 
@@ -293,56 +283,6 @@ void delete_user(){
 
 void delete_book(){
     /*A librarian only function similar to delete_user() but for books*/
-    int bkid;
-    printf("Enter Bookid to delete book : ");
-    scanf("%d",&bkid);
-    if((bkid<(librarysize+removesizel))&&(bkid>0))
-    {
-        int l=0,h=(librarysize+removesizel-1),mid;  //Binary search
-     while(l<=h)
-     {
-        mid=(l+h)/2;
-        if(bkid>library[mid].bookid)
-        {
-            l=mid+1;
-        }
-        else if(bkid<library[mid].bookid)
-        {
-            h=mid-1;
-        }
-        else
-        {
-            printf("Found Book\n");
-            printf("Are you sure you want to delete book?\n");
-            int yes;
-            printf("Enter 1 to delete or press any other key to cancel");
-            if(yes==1)
-            {
-                library[mid].bookid=0;
-                //library[mid].bookname=NULL;
-                //library[mid].authorname=null;
-                library[mid].issue=0;
-                library[mid].heldby=0;
-                library[mid].requestedby=0;
-                library[mid].duedate=0;
-            }
-            else
-            {
-                printf("Book not deleted");
-            }
-            
-
-        }
-        
-     }
-    
-    }
-
-    else
-    {
-         printf("Invalid Bookid\n Try Again");
-    }
-    
 
 }
 void password_change(int id){
@@ -368,15 +308,13 @@ void inventory(){
     //add another variable to see the no. of books in library & no. of books issued
     int opt;
     do{
-        printf("Enter 1 to see the inventory of Books\n");
+        printf("Enter 1 to see the number of books\n");
         printf("Enter 2 to see the number of active users\n");
         printf("Enter 3 to return to the previous screen\n");
         scanf("%d",&opt);
         if(opt==1)
         {
-            printf("Total Number of BOOKS owned by library : %d\n",librarysize);
-            printf("Number of Books issued out to members : %d\n ",issued);
-            printf("Number of Books present in the library : %d\n ",(librarysize-issued));
+            printf("Number of BOOKS : %d",librarysize);
         }
         else if(opt==2)
         {
