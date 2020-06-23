@@ -18,8 +18,6 @@ void search_title(int);
 void search_id(int);
 void reserve_book(int);
 void welcome();
-void return_book(int);
-void get_book(int);
 
 struct book{
     /*A book has an uniqueid, book_name, author, issue_no, id of the person holding it,
@@ -115,7 +113,7 @@ void search_id(int id){
             printf("Book ID : %d \n",library[i].bookid);
             printf("Title : %s \n",library[i].bookname);
             printf("Author : %s \n",library[i].bookauthor);
-            printf("issue number : %d \n",library[i].issue);
+            printf("Issue number : %d \n",library[i].issue);
         }
     }
     if(flag==0){
